@@ -73,27 +73,52 @@ class Cell:
     """
     def __init__(self,
                  uid: int,
-                 north: bool = random.choice([True,False]),
-                 east: bool = random.choice([True,False]),
-                 south: bool = random.choice([True,False]),
-                 west: bool = random.choice([True, False]),
+                 north: bool = None,
+                 east: bool = None,
+                 south: bool = None,
+                 west: bool = None,
                  win: bool = False, # 终点判定
-                 gain: bool = random.choice([True, False]), # 正增益判定
-                 effect: int = random.randint(game_version['effect_min'], game_version['effect_max'])
+
+                 gain: bool = None, # 正增益判定
+                 effect: int = None
                  ):
         # 北, 东, 南, 西
         # North, East, South, West
         try:
             self.uid = uid
-            self.N = north
-            self.E = east
-            self.S = south
-            self.W = west
+            # 墙体
+            if True:
+                if north is None:
+                    self.N = random.choice([True, False])
+                else:
+                    self.N = north
+                if east is None:
+                    self.E = random.choice([True, False])
+                else:
+                    self.E = east
+                if south is None:
+                    self.S = random.choice([True, False])
+                else:
+                    self.S = south
+                if west is None:
+                    self.W = random.choice([True, False])
+                else:
+                    self.W = west
+
             # self.png = pngs[f'{north}{east}{south}{west}'.replace('True', 'T').replace('False', 'F')]
             self.png = None
             self.win = win
-            self.gain = gain
-            self.effect = effect
+            # 格子增益效果
+            if True:
+                if gain is None:
+                    self.gain = random.choice([True, False])
+                else:
+                    self.gain = gain
+                if effect is None:
+                    self.effect = random.randint(game_version['effect_min'], game_version['effect_max'])
+                else:
+                    self.effect = effect
+
             logging.info(f'cell uid:{self.uid}')
 
         except Exception as e:
@@ -139,27 +164,65 @@ def w_cell(h: int,w: int) -> dict:
         if True:
             # 出发点无障碍规则
             if True:
-                if w > 1:
-                    cells[0].E = False
+                try:
+                    if w > 1:
+                        cells[0].E = False
+                        cells[0 + 1].W = False
 
-                if h > 1:
-                    cells[0].S = False
+                    if h > 1:
+                        cells[0].S = False
+                        cells[0 + w].N = False
+
+                except KeyError:
+                    pass
 
             # 终点无障碍规则
             if True:
-                if cells[t].win is True:
-                    cells[t].W = False
-                    cells[t].E = False
-                    cells[t].N = False
-                    cells[t].S = False
-                    if t % w == 0:  # 西
-                        cells[t].W = True
-                    if (t + 1) % w == 0:  # 东
-                        cells[t].E = True
-                    if t < w:  # 北
-                        cells[t].N = True
-                    if t >= h * w - w:  # 南
-                        cells[t].S = True
+                try:
+                    if cells[t].win is True:
+                        cells[t].W = False
+                        cells[t].E = False
+                        cells[t].N = False
+                        cells[t].S = False
+                        if t % w == 0:  # 西
+                            cells[t].W = True
+                        if (t - 1) % w == 0:  # 东
+                            cells[t].E = True
+                        if t < w:  # 北
+                            cells[t].N = True
+                        if t >= h * w - w:  # 南
+                            cells[t].S = True
+
+                    # 用来把底下的也改了的
+                    # 这堆有bug，貌似还挺大
+                    # 检查下一行的Cell是否是终点
+                    if (t + w) < (h * w) and cells[t + w].win:
+                        cells[t].S = False
+                    # 检查下一个Cell是否是终点
+                    if (t + 1) < (h * w) and cells[t + 1].win:
+                        cells[t].E = False
+                    # 检查上一行的Cell是否是终点
+                    if t >= w and cells[t - w].win:
+                        cells[t].N = False
+                    # 检查上一个Cell是否是终点
+                    if t % w > 0 and cells[t - 1].win:
+                        cells[t].W = False
+
+                except KeyError:
+                    pass
+
+            # 左&上墙体同步规则
+            if True:
+                try:
+                    # 左侧墙体同步
+                    if not t % w == 0:
+                        cells[t - 1].E = cells[t].W
+                    # 上侧墙体同步
+                    if not t < w:
+                        cells[t - w].S = cells[t].N
+
+                except KeyError:
+                    pass
 
             pass
 

@@ -155,7 +155,10 @@ def random_game(h: int, w: int):
                 running = False
                 sys_exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                    logging.info('exit random game')
+                elif event.key == pygame.K_w or event.key == pygame.K_UP:
                     if int_if(my_xy[1], 0) and not cells[my_cell].N and not cells[my_cell - w].S:
                         my_xy[1] -= 50
                         my_cell -= w
