@@ -1,7 +1,4 @@
-import pygame
-
 from configure import *
-from pngs import pngs
 
 if True:
     logging.basicConfig(filename=path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
@@ -11,35 +8,119 @@ if True:
     root_logger.name = 'game'
     logging.info(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-# 初始化pygame
-if True:
-    pygame.init()
-    game_fps = 60
-    colors = {
-        '#000000': (0, 0, 0),
-        '#ffffff': (255, 255, 255)
-    }
-
-    # 以下均为窗口
-    # game_w_h = (w, h)
-    # window = pygame.display.set_mode(game_w_h)
-    # pygame.display.set_caption('走格子')
-    # pygame.time.Clock().tick(game_fps)
-    # game_ico = pygame.image.load('pngs\\game.ico')
-    # pygame.display.set_icon(game_ico)
-
-    def exit_pygame():
-        logging.info('exit pygame')
-        pygame.quit()
-
-    logging.info('pygame ok')
+# 以下为pygame窗口实例
+"""
+game_w_h = (w, h)
+window = pygame.display.set_mode(game_w_h)
+pygame.display.set_caption('走格子')
+pygame.time.Clock().tick(game_fps)
+game_ico = pygame.image.load('pngs\\game.ico')
+pygame.display.set_icon(game_ico)
+"""
 
 
 def open_game():
-    pass
+    game_w_h = (100, 200)
+    window = pygame.display.set_mode(game_w_h)
+    pygame.display.set_caption('走格子')
+    pygame.time.Clock().tick(game_fps)
+    game_ico = pygame.image.load('pngs\\game.ico')
+    pygame.display.set_icon(game_ico)
+
+    # 用到的button
+    if True:
+        # 随机模式
+        # specify为True的时候为指定模式
+        if game_version['random_specify']:
+            down_button('random_game',
+                        0,
+                        0,
+                        100,
+                        50,
+                        '#ffffff',
+                        lambda: random_game(game_version['random_h'], game_version['random_w'])
+            )
+
+        else:
+            down_button('random_game',
+                        0,
+                        0,
+                        100,
+                        50,
+                        '#ffffff',
+                        lambda: random_game(
+                            random.randint(game_version['random_min'], game_version['random_max']),
+                            random.randint(game_version['random_min'], game_version['random_max'])
+                        )
+            )
+
+        # 关卡模式
+        down_button('lv_game',
+                    0,
+                    50,
+                    100,
+                    50,
+                    '#ffffff',
+        )
+
+        # 游戏设置
+        down_button('game_settings',
+                    0,
+                    100,
+                    100,
+                    50,
+                    '#ffffff',
+        )
+
+        # 退出游戏
+        down_button('exit_game',
+                    0,
+                    150,
+                    100,
+                    50,
+                    '#ffffff',
+                    lambda: sys_exit()
+        )
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for i in buttons.keys():
+                    if buttons[i]['rect'].collidepoint(event.pos):
+                        logging.info(f'down button {i}')
+                        if not buttons[i]['def'] is None:
+                            buttons[i]['def']()
+
+        window.fill(colors['#ffffff'])
+
+        # 随机模式button
+        if True:
+            pygame.draw.rect(window, buttons['random_game']['color'], buttons['random_game']['rect'])
+            window.blit(buttons['random_game']['png'], (0, 0))
+
+        # 关卡模式button
+        if True:
+            pygame.draw.rect(window, buttons['lv_game']['color'], buttons['lv_game']['rect'])
+            window.blit(buttons['lv_game']['png'], (0, 50))
+
+        # 游戏设置button
+        if True:
+            pygame.draw.rect(window, buttons['game_settings']['color'], buttons['game_settings']['rect'])
+            window.blit(buttons['game_settings']['png'], (0, 100))
+
+        # 退出游戏button
+        if True:
+            pygame.draw.rect(window, buttons['exit_game']['color'], buttons['exit_game']['rect'])
+            window.blit(buttons['exit_game']['png'], (0, 150))
+
+        pygame.display.flip()
 
 
-def main(h: int, w: int):
+def random_game(h: int, w: int):
     w_cell(h, w)
     game_w_h = (w * 50, h * 50)
     window = pygame.display.set_mode(game_w_h)
@@ -128,6 +209,6 @@ def main(h: int, w: int):
 
 
 if __name__ == '__main__':
-    # open_game()
-    main(10, 10)
+    open_game()
+    # rondom_game(10, 10)
     pass

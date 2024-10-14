@@ -1,7 +1,11 @@
 import random
 import sys
+from collections import defaultdict
+
+import pygame
 
 from jsons import *
+from pngs import pngs
 
 if True:
     logging.basicConfig(filename=path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
@@ -18,6 +22,43 @@ if True:
         print('未正确配置version')
         input('按下Enter退出')
         exit(1)
+
+# 初始化pygame
+if True:
+    pygame.init()
+    game_fps = 60
+    colors = {
+        '#000000': (0, 0, 0),
+        '#ffffff': (255, 255, 255)
+    }
+    buttons: dict[pygame.Rect, tuple, pygame.Surface, defaultdict]= {}
+
+    # 以下为窗口实例
+    # game_w_h = (w, h)
+    # window = pygame.display.set_mode(game_w_h)
+    # pygame.display.set_caption('走格子')
+    # pygame.time.Clock().tick(game_fps)
+    # game_ico = pygame.image.load('pngs\\game.ico')
+    # pygame.display.set_icon(game_ico)
+
+    def exit_pygame():
+        logging.info('exit pygame')
+        pygame.quit()
+
+
+    def down_button(name: str, x: int, y: int, w: int, h: int, color: str, com: defaultdict = None):
+        """
+        定义一个button
+        """
+        buttons[name] = {
+            'rect': pygame.Rect(x, y, w, h),
+            'color': colors[color],
+            'png': pngs[name],
+            'def': com
+        }
+        logging.info(f'{name} button ok')
+
+    logging.info('pygame ok')
 
 
 def sys_exit(t:int = 0):

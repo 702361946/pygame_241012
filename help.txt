@@ -8,3 +8,9 @@ w,s,a,d和小键盘的上下左右应该知道吧
 那些你是跨不过去的！
 
 获胜的唯一方式只有走到旗子！
+
+至于随机模式的指定矩阵大小
+请修改.\json\version.json中的random_specify值(T/F)
+注意：json文件内的T/F必须小写
+random_min\random_max用来随机化矩阵大小
+random_w\random_h用来指定宽高

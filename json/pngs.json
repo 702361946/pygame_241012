@@ -16,5 +16,9 @@
     "TTTF",
     "TTTT",
     "my",
-    "win"
+    "win",
+    "random_game",
+    "lv_game",
+    "exit_game",
+    "game_settings"
 ]
