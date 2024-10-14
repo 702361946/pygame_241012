@@ -1,3 +1,8 @@
+#  Copyright (c) 2024. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+#  702361946@qq.com
+#  github.com/702361946
+#  github.com/702361946/pygame_241012
+from DFS import *
 from configure import *
 
 if True:
@@ -121,7 +126,11 @@ def open_game():
 
 
 def random_game(h: int, w: int):
-    w_cell(h, w)
+    while True:
+        w_cell(h, w)
+        if not game_version['random_DFS'] or DFS(w_game_map(cells)):
+            break
+
     game_w_h = (w * 50, h * 50)
     window = pygame.display.set_mode(game_w_h)
     pygame.display.set_caption('走格子')
