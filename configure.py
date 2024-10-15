@@ -1,4 +1,4 @@
-#  Copyright (c) 2024. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+#  Copyright (c) 2024.
 #  702361946@qq.com
 #  github.com/702361946
 #  github.com/702361946/pygame_241012
@@ -31,7 +31,15 @@ if True:
 # 初始化pygame
 if True:
     pygame.init()
+
+    pygame.display.set_caption('走格子')
+
     game_fps = 60
+    pygame.time.Clock().tick(game_fps)
+
+    game_ico = pygame.image.load('pngs\\game.ico')
+    pygame.display.set_icon(game_ico)
+
     colors = {
         '#000000': (0, 0, 0),
         '#ffffff': (255, 255, 255)
@@ -75,6 +83,8 @@ cells = {}
 class Cell:
     """
     设置矩阵格子
+    北, 东, 南, 西
+    North, East, South, West
     """
     def __init__(self,
                  uid: int,
@@ -124,7 +134,7 @@ class Cell:
                 else:
                     self.effect = effect
 
-            logging.info(f'cell uid:{self.uid}')
+            # logging.info(f'cell uid:{self.uid}')
 
         except Exception as e:
             print(e)
@@ -149,7 +159,7 @@ def w_cell(h: int,w: int) -> dict:
 
         # 终点规则
         if not win_if:
-            if (random.randint(1, 100) > 90 or t == h * w - 1) and t != 0:
+            if (random.randint(1, 100) > 90 or t == h * w - 1) and t >= h * w // 2:
                 cells[t].win = True
                 win_if = True
                 logging.info(f'win cell uid:{t}')

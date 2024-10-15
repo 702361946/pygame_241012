@@ -1,4 +1,4 @@
-#  Copyright (c) 2024. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+#  Copyright (c) 2024.
 #  702361946@qq.com
 #  github.com/702361946
 #  github.com/702361946/pygame_241012
@@ -63,7 +63,7 @@ def w_game_map(cells: dict, open_game: int = None, win: int = None)-> dict:
 
 
 # DFS 深度优先搜索
-def DFS(game_map: dict, unvisited: list = None, pending: list = None, visited: list = None, t: int = 0):
+def DFS(game_map: dict, unvisited: list = None, pending: list = None, visited: list = None, dfs_max: int = 50):
     """
     map必须为w_game_map构造的map
     Unvisited未访问列表(默认为开始)
@@ -81,7 +81,8 @@ def DFS(game_map: dict, unvisited: list = None, pending: list = None, visited: l
             visited = []
 
     unvisited.append(game_map['open_uid'])
-    # logging.debug(f'win:{game_map['win_uid']}')
+    logging.info(f'win:{game_map['win_uid']}')
+    t: int = 0
     while True:
         # 寻找节点
         for i in unvisited:
@@ -101,8 +102,11 @@ def DFS(game_map: dict, unvisited: list = None, pending: list = None, visited: l
 
         # 检查后执行赋值以进行下一步
         if True:
-            unvisited = pending
-            logging.debug(f'u{unvisited}\\v{visited}')
+            unvisited = []
+            for i in pending:
+                if not i in visited:
+                    unvisited.append(i)
+            # logging.debug(f'u{unvisited}\\v{visited}')
             pending = []
 
         # 循环判定是否到达了节点
@@ -111,10 +115,7 @@ def DFS(game_map: dict, unvisited: list = None, pending: list = None, visited: l
                 logging.info('DFS is True')
                 return True
         else:
-            for i in range(game_map['h'] * game_map['w']):
-                if not game_map[i] and not i in visited:
-                    visited.append(i)
-            if len(visited) == game_map['h'] * game_map['w'] - 1 or t >= 25:
+            if len(unvisited) == 0 or t >= dfs_max:
                 logging.info('DFS is False')
                 return False
 

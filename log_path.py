@@ -1,4 +1,4 @@
-#  Copyright (c) 2024. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+#  Copyright (c) 2024.
 #  702361946@qq.com
 #  github.com/702361946
 #  github.com/702361946/pygame_241012
