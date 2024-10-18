@@ -5,9 +5,10 @@
 
 from DFS import *
 from configure import *
+from configure_pygame import *
 
 if True:
-    logging.basicConfig(filename=path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
+    logging.basicConfig(filename=log_path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
     # 获取root logger
     root_logger = logging.getLogger()
     # 修改root logger的名称
@@ -26,6 +27,7 @@ pygame.display.set_icon(game_ico)
 
 
 # 开始游戏
+# noinspection PyTypeChecker
 def open_game():
     game_w_h = (100, 200)
     window = pygame.display.set_mode(game_w_h)
@@ -35,65 +37,27 @@ def open_game():
         # 随机模式
         # specify为True的时候为指定模式
         if game_version['random_specify']:
-            down_button('random_game',
-                        0,
-                        0,
-                        100,
-                        50,
-                        '#ffffff',
-                        lambda: random_game(game_version['random_h'], game_version['random_w'])
-            )
+            down_button('random_game', 0, 0, 100, 50, '#ffffff', lambda: random_game(
+                game_version['random_h'], game_version['random_w']
+            ))
 
         else:
-            down_button('random_game',
-                        0,
-                        0,
-                        100,
-                        50,
-                        '#ffffff',
-                        lambda: random_game(
-                            random.randint(game_version['random_min'], game_version['random_max']),
-                            random.randint(game_version['random_min'], game_version['random_max'])
-                        )
-            )
+            down_button('random_game', 0, 0, 100, 50, '#ffffff', lambda: random_game(
+                random.randint(game_version['random_min'], game_version['random_max']),
+                random.randint(game_version['random_min'], game_version['random_max'])
+            ))
 
         # 关卡模式
-        down_button('lv_game',
-                    0,
-                    50,
-                    100,
-                    50,
-                    '#ffffff',
-                    lambda: lv_game(game_version['lv'])
-        )
+        down_button('lv_game', 0, 50, 100, 50, '#ffffff', lambda: level_page())
 
         # 游戏设置
-        down_button('game_settings',
-                    0,
-                    100,
-                    100,
-                    50,
-                    '#ffffff',
-        )
+        down_button('game_settings', 0, 100, 100, 50, '#ffffff')
 
         # 退出游戏
-        down_button('exit_game',
-                    0,
-                    150,
-                    100,
-                    50,
-                    '#ffffff',
-                    lambda: sys_exit()
-        )
+        down_button('exit_game', 0, 150, 100, 50, '#ffffff', lambda: sys_exit())
 
         # 游戏胜利界面确认button
-        down_button('ok',
-                    50,
-                    100,
-                    100,
-                    50,
-                    '#ffffff',
-        )
+        down_button('ok', 50, 100, 100, 50, '#ffffff')
 
 
     while True:
@@ -102,11 +66,15 @@ def open_game():
                 logging.info('quit game')
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for i in buttons.keys():
-                    if buttons[i]['rect'].collidepoint(event.pos):
-                        logging.info(f'down button {i}')
-                        if not buttons[i]['def'] is None:
-                            buttons[i]['def']()
+                try:
+                    for i in buttons.keys():
+                        if buttons[i]['rect'].collidepoint(event.pos):
+                            logging.info(f'down button {i}')
+                            if not buttons[i]['def'] is None:
+                                buttons[i]['def']()
+
+                except Exception as e:
+                    print(e)
 
         window.fill(colors['#ffffff'])
 
@@ -221,26 +189,89 @@ def random_game(h: int, w: int):
         pygame.display.flip()  # 更新屏幕显示
 
 
-# 关卡模式
-def lv_game(lv: int = None):
-    if lv is None:
-        lv = 0
+# 选关页
+def level_page():
+    logging.info('open level page')
 
-    lvs = r_json('lvs')[f'{lv}']
-    for i in range(lvs['w'] * lvs['h']):
+    game_w_h = (200, 400)
+    window = pygame.display.set_mode(game_w_h)
+
+    # buttons
+    level_button = {}
+    y = 0
+    for l in game_levels.keys():
+        for a in game_levels[l].keys():
+            # game_levels[l][a]
+            level = r_json(game_levels[l][a])
+            down_button(
+                level['id'],
+                0,
+                y,
+                200,
+                50,
+                '#ffffff',
+                com=lambda f = l, b = a: level_game([f, b]),
+                button_str=level['name']
+            )
+            level_button[level['id']] = buttons.pop(level['id'])
+            y += 50
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                sys_exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                    logging.info('exit level game')
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for i in level_button.keys():
+                    if level_button[i]['rect'].collidepoint(event.pos):
+                        logging.info(f'down button {i}')
+                        if not level_button[i]['def'] is None:
+                            level_button[i]['def']()
+
+        window.fill(colors['#ffffff'])
+
+        # 按钮渲染
+        for key in level_button.keys():
+            # 绘制按钮背景
+            pygame.draw.rect(window, level_button[key]['color'], level_button[key]['rect'])
+
+            # 绘制文本
+            if level_button[key]['str']:
+                text_surface = level_button[key]['font'].render(level_button[key]['str'], True, colors['#000000'])
+                text_rect = text_surface.get_rect(center=level_button[key]['rect'].center)
+                window.blit(text_surface, text_rect)
+
+        pygame.display.flip()  # 更新屏幕显示
+
+
+# 关卡模式
+def level_game(level: list[str, str] = None):
+    if level is None or type(level).__name__ != 'list':
+        level = ['702361946', '0']
+
+    logging.info(f'level:{level}')
+    level = r_json(game_levels[level[0]][level[1]])
+    for i in range(level['w'] * level['h']):
         cells[i] = Cell(
             i,
-            north = lvs[f'{i}'][0],
-            east = lvs[f'{i}'][1],
-            south = lvs[f'{i}'][2],
-            west = lvs[f'{i}'][3],
-            win = lvs[f'{i}'][4]
+            north=level[f'{i}'][0],
+            east=level[f'{i}'][1],
+            south=level[f'{i}'][2],
+            west=level[f'{i}'][3]
         )
-    logging.info(f'lv:{lv}')
+        if i == level['win']:
+            cells[i].win = True
 
 
-    w = lvs['w']
-    h = lvs['h']
+    w = level['w']
+    h = level['h']
     game_w_h = (w * 50, h * 50)
     window = pygame.display.set_mode(game_w_h)
 
@@ -268,7 +299,7 @@ def lv_game(lv: int = None):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                    logging.info('exit lv game')
+                    logging.info('exit level game')
                 elif event.key == pygame.K_w or event.key == pygame.K_UP:
                     if int_if(my_xy[1], 0) and not cells[my_cell].N and not cells[my_cell - w].S:
                         my_xy[1] -= 50

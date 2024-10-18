@@ -5,21 +5,19 @@
 
 import random
 import sys
-from collections import defaultdict
-
-import pygame
 
 from jsons import *
-from pngs import pngs
 
+# logging
 if True:
-    logging.basicConfig(filename=path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
+    logging.basicConfig(filename=log_path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
     # 获取root logger
     root_logger = logging.getLogger()
     # 修改root logger的名称
     root_logger.name = 'configure'
     logging.info(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
+# version
 if True:
     game_version = r_json('version')
     if game_version is None:
@@ -28,50 +26,14 @@ if True:
         input('按下Enter退出')
         exit(1)
 
-# 初始化pygame
+# levels
 if True:
-    pygame.init()
-
-    pygame.display.set_caption('走格子')
-
-    game_fps = 60
-    pygame.time.Clock().tick(game_fps)
-
-    game_ico = pygame.image.load('pngs\\game.ico')
-    pygame.display.set_icon(game_ico)
-
-    colors = {
-        '#000000': (0, 0, 0),
-        '#ffffff': (255, 255, 255)
-    }
-    buttons: dict[pygame.Rect, tuple, pygame.Surface, defaultdict]= {}
-
-    # 以下为窗口实例
-    # game_w_h = (w, h)
-    # window = pygame.display.set_mode(game_w_h)
-    # pygame.display.set_caption('走格子')
-    # pygame.time.Clock().tick(game_fps)
-    # game_ico = pygame.image.load('pngs\\game.ico')
-    # pygame.display.set_icon(game_ico)
-
-    def exit_pygame():
-        logging.info('exit pygame')
-        pygame.quit()
-
-
-    def down_button(name: str, x: int, y: int, w: int, h: int, color: str, com: defaultdict = None):
-        """
-        定义一个button
-        """
-        buttons[name] = {
-            'rect': pygame.Rect(x, y, w, h),
-            'color': colors[color],
-            'png': pngs[name],
-            'def': com
-        }
-        logging.info(f'{name} button ok')
-
-    logging.info('pygame ok')
+    game_levels = r_json('level')
+    if game_levels is None:
+        logging.error('no level')
+        print('未读取到level')
+        input('按下Enter退出')
+        exit(1)
 
 
 def sys_exit(t:int = 0):
@@ -141,7 +103,7 @@ class Cell:
             logging.error(e)
 
 
-def w_cell(h: int,w: int) -> dict:
+def w_cell(h: int,w: int):
     """
     h高, w宽, 用以编写字典cells
     """

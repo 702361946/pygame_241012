@@ -1,0 +1,10 @@
+{
+    "effect_min": 1,
+    "effect_max": 10,
+    "random_specify": false,
+    "random_min": 3,
+    "random_max": 10,
+    "random_w": 5,
+    "random_h": 5,
+    "random_DFS": true
+}

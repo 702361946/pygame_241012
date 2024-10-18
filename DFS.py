@@ -8,10 +8,10 @@
 import logging
 from datetime import datetime
 
-from log_path import path
+from paths import log_path
 
 if True:
-    logging.basicConfig(filename=path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
+    logging.basicConfig(filename=log_path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
     # 获取root logger
     root_logger = logging.getLogger()
     # 修改root logger的名称

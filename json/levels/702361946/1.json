@@ -1,0 +1,25 @@
+{
+    "name": "教程关2",
+    "id": "000001",
+    "win": 2,
+    "w": 1,
+    "h": 3,
+    "0": [
+        true,
+        true,
+        false,
+        true
+    ],
+    "1": [
+        false,
+        true,
+        false,
+        true
+    ],
+    "2": [
+        false,
+        true,
+        true,
+        true
+    ]
+}

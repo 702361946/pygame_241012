@@ -7,10 +7,10 @@ import logging
 from datetime import datetime
 
 import json
-from log_path import path
+from paths import log_path
 
 if True:
-    logging.basicConfig(filename=path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
+    logging.basicConfig(filename=log_path, filemode='w', level=logging.DEBUG, encoding='UTF-8')
     # 获取root logger
     root_logger = logging.getLogger()
     # 修改root logger的名称
@@ -30,7 +30,7 @@ def w_json(a, name: str, language: str = 'utf-8'):
 
 
 def r_json(name: str, language: str = 'utf-8'):
-    logging.info(f'r json\\name:{name}')
+    logging.info(f'r json\\{name}')
     try:
         with open(f'json\\{name}.json', 'r+', encoding=language) as f:
             a = json.load(f)

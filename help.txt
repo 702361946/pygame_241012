@@ -18,5 +18,5 @@ random_w\random_h用来指定宽高
 随机模式DFS路径检查用来保证生成的地图是可以通过的
 如果想要开关可以修改.\json\version.json中的random_DFS值(T/F)
 
-关卡模式需要手动修改.\json\version.json中的lv值(0~n)
-所有的lv都是数字
+关卡模式->选关页
+轻击esc键可以返回主菜单
